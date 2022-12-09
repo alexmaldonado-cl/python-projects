@@ -7,29 +7,50 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-emailSender   = os.getenv('GOOGLE_EMAIL')
-emailPassword = os.getenv('GOOGLE_PASSWORD')
+def prepareData():
 
-# Generate an email in https://temp-mail.org/es/
-emailReceiver = os.getenv('EMAIL_RECIPIENT')
+    emailSender   = os.getenv('GOOGLE_EMAIL')
+    emailPassword = os.getenv('GOOGLE_PASSWORD')
+    emailReceiver = os.getenv('EMAIL_RECIPIENT')
 
-subject = "Don't forget to subscribe"
+    emailSubject = "Don't forget to subscribe"
 
-body = """
+    emailBody = """
 
-When you watch a video, please hit subscribe
+    When you watch a video, please hit subscribe
 
-"""
+    """
 
-em = EmailMessage()
-em['From'] = emailSender
-em['To'] = emailReceiver
-em['subject'] = subject
-em.set_content(body)
+    return {
+        'from'    : emailSender,
+        'password': emailPassword,
+        'to'      : emailReceiver,
+        'subject' : emailSubject,
+        'message' : emailBody
+    }
 
-context = ssl.create_default_context()
 
-with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-    smtp.login(emailSender, emailPassword)
-    smtp.sendmail(emailSender, emailReceiver, em.as_string())
+def sendEmail():
 
+    config        = prepareData()
+
+    em            = EmailMessage()
+    em['From']    = config['from']
+    em['To']      = config['to']
+    em['subject'] = config['subject']
+    em.set_content(config['message'])
+
+    context       = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+        smtp.login(config['from'], config['password'])
+        smtp.sendmail(config['from'], config['to'], em.as_string())
+
+    print('=' * 10, ' ' * 5, 'Email enviado exitosamente', ' ' * 5, '=' * 10)
+
+def main():
+    sendEmail()
+
+
+if __name__ == "__main__":
+    main()

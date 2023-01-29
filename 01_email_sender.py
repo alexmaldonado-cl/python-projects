@@ -51,6 +51,6 @@ def sendEmail():
 def main():
     sendEmail()
 
-
+#* Entry point
 if __name__ == "__main__":
     main()

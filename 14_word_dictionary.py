@@ -1,4 +1,3 @@
-
 def main():
     word_dictionary = {
         'hi': 'a way of gretting',
